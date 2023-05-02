@@ -395,8 +395,9 @@ class GraphRunnableTask(ConfiguredTask):
         for i, result in enumerate(self.node_results):
             if result.node.node_info.get('materialized', 'view') != 'view':
                 stats = adapter.get_stats(result)
-                if stats:
-                    setattr(self.node_results[i], 'stats', stats)
+            else:
+                stats = []
+            setattr(self.node_results[i], 'stats', stats)
 
     def execute_with_hooks(self, selected_uids: AbstractSet[str]):
         adapter = get_adapter(self.config)
