@@ -390,6 +390,13 @@ class GraphRunnableTask(ConfiguredTask):
 
     def print_results_line(self, node_results, elapsed):
         pass
+    
+    def add_stats_to_results(self, adapter):
+        for i, result in enumerate(self.node_results):
+            if result.node.node_info.get('materialized', 'view') != 'view':
+                stats = adapter.get_stats(result)
+                if stats:
+                    setattr(self.node_results[i], 'stats', stats)
 
     def execute_with_hooks(self, selected_uids: AbstractSet[str]):
         adapter = get_adapter(self.config)
@@ -398,6 +405,7 @@ class GraphRunnableTask(ConfiguredTask):
             self.before_run(adapter, selected_uids)
             res = self.execute_nodes()
             self.after_run(adapter, res)
+            self.add_stats_to_results(adapter)
         finally:
             adapter.cleanup_connections()
             elapsed = time.time() - started

@@ -187,6 +187,7 @@ class RunResultsMetadata(BaseArtifactMetadata):
 @dataclass
 class RunResultOutput(BaseResult):
     unique_id: str
+    stats: Optional[List[Dict[str, Any]]]
 
 
 def process_run_result(result: RunResult) -> RunResultOutput:
@@ -199,6 +200,7 @@ def process_run_result(result: RunResult) -> RunResultOutput:
         message=result.message,
         adapter_response=result.adapter_response,
         failures=result.failures,
+        stats=result.stats,
     )
 
 
